@@ -1,0 +1,15 @@
+# ninja log v6
+40	276	7786406968588224	UTFPRGc_autogen/timestamp	2114c487d74b94ac
+40	276	7786406968588224	UTFPRGc_autogen/mocs_compilation.cpp	2114c487d74b94ac
+31	1736	7822706616215560	C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CGUtfpr_autogen/timestamp	545df0b52795ec39
+40	276	7786406968588224	C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/UTFPRGc_autogen/timestamp	2114c487d74b94ac
+40	276	7786406968588224	C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/UTFPRGc_autogen/mocs_compilation.cpp	2114c487d74b94ac
+236	3107	7786406767409870	CMakeFiles/UTFPRGc.dir/UTFPRGc_autogen/mocs_compilation.cpp.obj	6baf26820711ba73
+31	1736	7822706616215560	CGUtfpr_autogen/timestamp	545df0b52795ec39
+1762	6560	7822706618038119	CMakeFiles/CGUtfpr.dir/canvas.cpp.obj	9c60d6ff25e373e4
+31	1736	7822706616215560	CGUtfpr_autogen/mocs_compilation.cpp	545df0b52795ec39
+31	1736	7822706616215560	C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CGUtfpr_autogen/mocs_compilation.cpp	545df0b52795ec39
+1739	6504	7822706617825663	CMakeFiles/CGUtfpr.dir/CGUtfpr_autogen/mocs_compilation.cpp.obj	cd3d2a0fb6eaca2c
+1754	6238	7822706617970615	CMakeFiles/CGUtfpr.dir/main.cpp.obj	ae35a80455317da6
+1746	7143	7822706617890572	CMakeFiles/CGUtfpr.dir/mainwindow.cpp.obj	465cbfc41435669d
+7143	7599	7822706671862803	CGUtfpr.exe	7584c291ddefbc20
