@@ -24,7 +24,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         canvas.h
-        objetografico.h
+        objeto3d.h
         main.h main.cpp
         canvas.h canvas.cpp
 

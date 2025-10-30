@@ -11,6 +11,11 @@
 #include <QTimer>
 #include <cmath>
 
+// MUDANÇA: Novos includes para o carregador .obj e depuração
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+
 namespace {
 QDoubleSpinBox* createSpinBox(double min, double max, double value) {
     auto spin = new QDoubleSpinBox();
@@ -26,48 +31,109 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_viewport.setRect(0, 0, 100, 100);
-    m_window.setRect(-500, -500, 1000, 1000);
-    m_displayFile.append(criarPlaneta("Sol", QPointF(0, 0), 80, 24, Qt::yellow));
-    m_displayFile.append(criarOrbita("Orbita Terra", QPointF(0, 0), 200, 48, Qt::lightGray));
-    m_displayFile.append(criarPlaneta("Terra", QPointF(200, 0), 20, 16, Qt::blue));
-    m_displayFile.append(criarOrbita("Orbita Marte", QPointF(0, 0), 350, 48, Qt::lightGray));
-    m_displayFile.append(criarPlaneta("Marte", QPointF(350, 0), 15, 16, QColor(255, 100, 0)));
 
-    m_displayFile.append(ObjetoGrafico("Reta Fora", RETA, { QPointF(-600, -600), QPointF(600, 600) }));
+    m_window.setRect(-100, -100, 200, 200);
 
+    // --- MUDANÇA: Adicionar Cor e Chão ---
+
+    // 1. Criar o Chão (Gramado)
+    auto ground = new Objeto3D("Chao");
+    // Z um pouco abaixo de 0 para os Pokémon ficarem "em cima"
+    float groundZ = -10.0; // Ajuste este valor se os Pokémon estiverem flutuando
+    ground->m_vertices.append(QVector3D(-500, -500, groundZ)); // v0
+    ground->m_vertices.append(QVector3D( 500, -500, groundZ)); // v1
+    ground->m_vertices.append(QVector3D( 500,  500, groundZ)); // v2
+    ground->m_vertices.append(QVector3D(-500,  500, groundZ)); // v3
+    // 2 faces triangulares para formar um quadrado
+    ground->m_faces.append({0, 1, 2}); // Triângulo 1
+    ground->m_faces.append({0, 2, 3}); // Triângulo 2
+    ground->setColor(QColor(34, 139, 34)); // Verde Grama
+    m_displayFile.append(ground);
+
+    // 2. Carregar Pokémon 1 com Cor
+    auto pokemon1 = new Objeto3D("Charizard");
+    if (carregarObjetoDeArquivo("charizard.obj", pokemon1)) {
+        pokemon1->m_modelMatrix.scale(0.5);
+        pokemon1->m_modelMatrix.translate(-50, 0, 0);
+        pokemon1->setColor(QColor(255, 69, 0)); // Laranja
+        m_displayFile.append(pokemon1);
+    } else {
+        qDebug() << "ERRO: Falha ao carregar charizard.obj";
+    }
+
+    // 3. Carregar Pokémon 2 com Cor
+    auto pokemon2 = new Objeto3D("Blastoise");
+    if (carregarObjetoDeArquivo("blastoise.obj", pokemon2)) {
+        pokemon2->m_modelMatrix.scale(0.5);
+        pokemon2->m_modelMatrix.translate(50, 0, 0);
+        pokemon2->setColor(QColor(0, 0, 205)); // Azul
+        m_displayFile.append(pokemon2);
+    } else {
+        qDebug() << "ERRO: Falha ao carregar blastoise.obj";
+    }
 
     m_canvas = new Canvas(this);
-    m_canvas->definirDisplayFile(&m_displayFile);
-    m_canvas->definirMundo(m_window);
+    m_canvas->definirDisplayFile3D(&m_displayFile);
 
     setupUiControls();
-    recalcularTransformacao();
+
+    // --- MUDANÇA: Iniciar Animação ---
+    m_animationTimer = new QTimer(this);
+    connect(m_animationTimer, &QTimer::timeout, this, &MainWindow::onAnimationTick);
+    m_animationTimer->start(30); // Atualiza a cada ~30ms (~33 FPS)
 }
 
 MainWindow::~MainWindow()
 {
+    qDeleteAll(m_displayFile);
     delete ui;
 }
+// MUDANÇA: Funções 2D removidas
+// ObjetoGrafico MainWindow::criarPlaneta(...) { ... }
+// ObjetoGrafico MainWindow::criarOrbita(...) { ... }
 
-ObjetoGrafico MainWindow::criarPlaneta(const QString &nome, const QPointF &centro, double raio, int segmentos, const QColor &cor)
+
+// MUDANÇA: Nova função para carregar .obj
+bool MainWindow::carregarObjetoDeArquivo(const QString &caminho, Objeto3D *objeto)
 {
-    QVector<QPointF> pontos;
-    for (int i = 0; i < segmentos; ++i) {
-        double angulo = 2.0 * M_PI * i / segmentos;
-        pontos.append(QPointF(centro.x() + raio * cos(angulo),
-                              centro.y() + raio * sin(angulo)));
+    QFile file(caminho);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Erro: Não foi possível abrir o arquivo" << caminho;
+        return false;
     }
-    return ObjetoGrafico(nome, POLIGONO, pontos, cor);
+    objeto->m_vertices.clear();
+    objeto->m_faces.clear();
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        QStringList parts = line.split(' ', Qt::SkipEmptyParts);
+        if (parts.isEmpty() || line.startsWith('#')) continue;
+
+        if (parts[0] == "v" && parts.size() >= 4) { // Vértice
+            objeto->m_vertices.append(QVector3D(parts[1].toFloat(), parts[2].toFloat(), parts[3].toFloat()));
+        } else if (parts[0] == "f" && parts.size() >= 4) { // Face
+            int v1 = parts[1].split('/')[0].toInt();
+            int v2 = parts[2].split('/')[0].toInt();
+            int v3 = parts[3].split('/')[0].toInt();
+            // .obj é 1-based, QVector é 0-based. Subtraia 1!
+            objeto->m_faces.append({v1 - 1, v2 - 1, v3 - 1});
+        }
+    }
+    file.close();
+    qDebug() << "Carregado" << caminho << "| Vértices:" << objeto->m_vertices.size() << "Faces:" << objeto->m_faces.size();
+    return !objeto->m_vertices.isEmpty() && !objeto->m_faces.isEmpty();
 }
 
-ObjetoGrafico MainWindow::criarOrbita(const QString &nome, const QPointF &centro, double raio, int segmentos, const QColor &cor)
-{
-    return criarPlaneta(nome, centro, raio, segmentos, cor);
-}
 
 void MainWindow::setupUiControls()
 {
+    // ... (Esta função continua a mesma, pois os controles da window são os mesmos)
+    // ... (Apenas cole seu código de setupUiControls() aqui)
+    // ... (Lembre-se de ajustar os ranges dos spin boxes para a nova window)
+    // Ex: winX = createSpinBox(-2000, 2000, m_window.x());
+    //     winW = createSpinBox(1, 4000, m_window.width());
+    //     ...
     QWidget *centralWidget = new QWidget;
     QHBoxLayout *mainLayout = new QHBoxLayout(centralWidget);
 
@@ -96,7 +162,6 @@ void MainWindow::setupUiControls()
     zoomLayout->addWidget(zoomOutButton);
 
     controlLayout->addWidget(windowGroup);
-    // controlLayout->addWidget(viewportGroup);
     controlLayout->addWidget(zoomGroup);
     controlLayout->addStretch();
 
@@ -121,7 +186,8 @@ void MainWindow::atualizarTransformacoes()
     m_window.setWidth(winW->value());
     m_window.setHeight(winH->value());
 
-    m_canvas->definirMundo(m_window); // nova window para clipping
+    // MUDANÇA: Não precisamos mais do definirMundo no canvas 2D
+    // m_canvas->definirMundo(m_window);
 
     recalcularTransformacao();
 }
@@ -129,7 +195,7 @@ void MainWindow::atualizarTransformacoes()
 void MainWindow::onViewportAlterado(const QRectF &viewport)
 {
     m_viewport = viewport;
-    atualizarUiPeloEstado();
+    atualizarUiPeloEstado(); // Atualiza a UI se ela dependesse da viewport
     recalcularTransformacao();
 }
 
@@ -138,17 +204,47 @@ void MainWindow::recalcularTransformacao()
 {
     if (m_window.width() == 0 || m_window.height() == 0) return;
 
-    QTransform transform;
-    transform.translate(m_viewport.x(), m_viewport.y());
-    transform.scale(m_viewport.width() / m_window.width(), m_viewport.height() / m_window.height());
-    transform.translate(-m_window.x(), -m_window.y());
+    QMatrix4x4 projectionMatrix;
+    float nearPlane = -1000.0;
+    float farPlane = 1000.0;
+    projectionMatrix.ortho(
+        m_window.left(),
+        m_window.right(),
+        m_window.bottom(),
+        m_window.top(),
+        nearPlane,
+        farPlane
+        );
 
-    m_transformacao = transform;
-    m_canvas->definirTransformacao(m_transformacao);
+    QMatrix4x4 viewMatrix;
+    viewMatrix.lookAt(
+        QVector3D(0, -200, 100), // Posição da Câmera (olhando de 'frente' e de 'cima')
+        QVector3D(0, 0, 0),    // Ponto para onde a câmera olha
+        QVector3D(0, 0, 1)     // MUDANÇA: Vetor "para cima" agora é Z!
+        );
+
+    m_viewProjectionMatrix = projectionMatrix * viewMatrix;
+
+    m_canvas->definirTransformacao3D(m_viewProjectionMatrix, m_viewport);
 }
 
+// --- MUDANÇA: NOVO SLOT PARA ANIMAÇÃO ---
+void MainWindow::onAnimationTick()
+{
+    // Gira os Pokémon (mas não o chão)
+    for (Objeto3D* obj : m_displayFile) {
+        if (obj->m_nome != "Chao") {
+            // Gira 1 grau ao redor do eixo Z (o eixo "para cima")
+            obj->m_modelMatrix.rotate(1.0, 0, 0, 1);
+        }
+    }
+
+    // Manda o canvas redesenhar com as novas posições
+    m_canvas->update();
+}
 void MainWindow::atualizarUiPeloEstado()
 {
+    // ... (Esta função continua a mesma) ...
     QSignalBlocker blockerX(winX);
     QSignalBlocker blockerY(winY);
     QSignalBlocker blockerW(winW);
@@ -162,30 +258,29 @@ void MainWindow::atualizarUiPeloEstado()
 
 void MainWindow::zoomIn()
 {
+    // ... (Esta função continua a mesma, ela manipula m_window) ...
     const double zoomFactor = 1.25;
     QPointF center = m_window.center();
     double newWidth = m_window.width() / zoomFactor;
     double newHeight = m_window.height() / zoomFactor;
-
     m_window.setWidth(newWidth);
     m_window.setHeight(newHeight);
     m_window.moveCenter(center);
-
     atualizarUiPeloEstado();
     atualizarTransformacoes();
 }
 
 void MainWindow::zoomOut()
 {
+    // ... (Esta função continua a mesma, ela manipula m_window) ...
     const double zoomFactor = 1.25;
     QPointF center = m_window.center();
     double newWidth = m_window.width() * zoomFactor;
     double newHeight = m_window.height() * zoomFactor;
-
     m_window.setWidth(newWidth);
     m_window.setHeight(newHeight);
     m_window.moveCenter(center);
-
     atualizarUiPeloEstado();
     atualizarTransformacoes();
 }
+

@@ -1,6 +1,5 @@
 C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CGUtfpr_autogen/EWIEGA46WW/moc_canvas.cpp: C:/Users/Richeter/Documents/UTFPRGc/canvas.h \
   C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CGUtfpr_autogen/moc_predefs.h \
-  C:/Qt/6.9.2/mingw_64/include/QtCore/QPointF \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QRectF \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QString \
   C:/Qt/6.9.2/mingw_64/include/QtCore/QVector \
@@ -131,8 +130,10 @@ C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CG
   C:/Qt/6.9.2/mingw_64/include/QtCore/qxptype_traits.h \
   C:/Qt/6.9.2/mingw_64/include/QtCore/qyieldcpu.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/QColor \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/QMatrix4x4 \
   C:/Qt/6.9.2/mingw_64/include/QtGui/QPainter \
   C:/Qt/6.9.2/mingw_64/include/QtGui/QTransform \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/QVector3D \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qaction.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qbitmap.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qbrush.h \
@@ -142,9 +143,11 @@ C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CG
   C:/Qt/6.9.2/mingw_64/include/QtGui/qfontinfo.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qfontmetrics.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qfontvariableaxis.h \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/qgenericmatrix.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qicon.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qimage.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qkeysequence.h \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/qmatrix4x4.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qpaintdevice.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qpainter.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qpalette.h \
@@ -152,6 +155,7 @@ C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CG
   C:/Qt/6.9.2/mingw_64/include/QtGui/qpixelformat.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qpixmap.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qpolygon.h \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/qquaternion.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qregion.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qrgb.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qrgba64.h \
@@ -160,6 +164,9 @@ C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CG
   C:/Qt/6.9.2/mingw_64/include/QtGui/qtguiexports.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qtguiglobal.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qtransform.h \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/qvector3d.h \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/qvector4d.h \
+  C:/Qt/6.9.2/mingw_64/include/QtGui/qvectornd.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.9.2/mingw_64/include/QtGui/qwindowdefs_win.h \
   C:/Qt/6.9.2/mingw_64/include/QtWidgets/QWidget \
@@ -381,4 +388,4 @@ C:/Users/Richeter/Documents/UTFPRGc/build/Desktop_Qt_6_9_2_MinGW_64_bit-Debug/CG
   C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/time.h \
   C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/vadefs.h \
   C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h \
-  C:/Users/Richeter/Documents/UTFPRGc/objetografico.h
+  C:/Users/Richeter/Documents/UTFPRGc/objeto3d.h

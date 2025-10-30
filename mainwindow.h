@@ -6,7 +6,11 @@
 #include <QRectF>
 #include <QDoubleSpinBox>
 #include <QSignalBlocker>
-#include "objetografico.h"
+#include <QMatrix4x4>
+#include "objeto3d.h"
+
+// MUDANÇA: Incluir o QTimer
+#include <QTimer>
 
 namespace Ui { class MainWindow; }
 class Canvas;
@@ -25,9 +29,11 @@ private slots:
     void zoomIn();
     void zoomOut();
 
+    // MUDANÇA: Novo slot para o timer de animação
+    void onAnimationTick();
+
 private:
-    ObjetoGrafico criarPlaneta(const QString &nome, const QPointF &centro, double raio, int segmentos, const QColor &cor);
-    ObjetoGrafico criarOrbita(const QString &nome, const QPointF &centro, double raio, int segmentos, const QColor &cor);
+    bool carregarObjetoDeArquivo(const QString& caminho, Objeto3D* objeto);
 
     void setupUiControls();
     void recalcularTransformacao();
@@ -35,14 +41,18 @@ private:
 
     Ui::MainWindow *ui;
     Canvas *m_canvas;
-    QVector<ObjetoGrafico> m_displayFile;
+    QVector<Objeto3D*> m_displayFile;
 
     QRectF m_window;
     QRectF m_viewport;
 
-    QTransform m_transformacao;
+    QMatrix4x4 m_viewProjectionMatrix;
+
+    // MUDANÇA: Ponteiro para o timer
+    QTimer* m_animationTimer;
 
     QDoubleSpinBox *winX, *winY, *winW, *winH;
 };
 
 #endif // MAINWINDOW_H
+
